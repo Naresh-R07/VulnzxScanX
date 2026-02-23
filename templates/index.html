@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VulnzxScanX - Web Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #00d2ff;
+            --secondary: #3a7bd5;
+            --bg: #0f0c29;
+            --glass: rgba(255, 255, 255, 0.1);
+            --glass-border: rgba(255, 255, 255, 0.2);
+            --text: #ffffff;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+            background-attachment: fixed;
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 900px;
+            background: var(--glass);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            text-align: center;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .input-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        @media (max-width: 600px) {
+            .input-group {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .field {
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            margin-bottom: 8px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: var(--primary);
+        }
+
+        input,
+        select {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--glass-border);
+            border-radius: 8px;
+            padding: 12px;
+            color: white;
+            outline: none;
+            transition: all 0.3s;
+        }
+
+        input:focus,
+        select:focus {
+            border-color: var(--primary);
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            gap: 10px;
+        }
+
+        .buttons {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        button {
+            flex: 1;
+            padding: 12px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .btn-start {
+            background: linear-gradient(to right, #00d2ff, #3a7bd5);
+            color: white;
+        }
+
+        .btn-stop {
+            background: #ff4b2b;
+            color: white;
+        }
+
+        .btn-clear {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 1px solid var(--glass-border);
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .terminal {
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 12px;
+            padding: 20px;
+            height: 400px;
+            overflow-y: auto;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 0.85rem;
+            line-height: 1.4;
+            border: 1px solid var(--glass-border);
+            white-space: pre-wrap;
+        }
+
+        .status-bar {
+            margin-top: 15px;
+            font-size: 0.9rem;
+            display: flex;
+            justify-content: space-between;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .status-active {
+            color: var(--primary);
+            font-weight: bold;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--glass-border);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <h1>VulnzxScanX</h1>
+
+        <div class="input-group">
+            <div class="field">
+                <label for="target">Target Host/IP</label>
+                <input type="text" id="target" placeholder="127.0.0.1 or example.com">
+            </div>
+            <div class="field">
+                <label for="scanType">Scan Type</label>
+                <select id="scanType">
+                    {% for type in scan_types %}
+                    <option value="{{ type }}">{{ type }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+
+        <div class="checkbox-group">
+            <input type="checkbox" id="rotate">
+            <label for="rotate">Rotate IP (Requires Tor)</label>
+        </div>
+
+        <div class="buttons">
+            <button id="startBtn" class="btn-start" onclick="startScan()">Start Scan</button>
+            <button id="stopBtn" class="btn-stop" onclick="stopScan()" disabled>Stop Scan</button>
+            <button class="btn-clear" onclick="clearOutput()">Clear</button>
+        </div>
+
+        <div class="terminal" id="output">Welcome to VulnzxScanX Web Interface.
+            Enter a target and click Start Scan to begin...</div>
+
+        <div class="status-bar">
+            <span>Status: <span id="status" class="status-active">Idle</span></span>
+            <span id="scanIdDisplay"></span>
+        </div>
+    </div>
+
+    <script>
+        let currentScanId = null;
+        let pollInterval = null;
+
+        async function startScan() {
+            const target = document.getElementById('target').value;
+            const type = document.getElementById('scanType').value;
+            const rotate = document.getElementById('rotate').checked;
+
+            if (!target) {
+                alert('Please enter a target host.');
+                return;
+            }
+
+            const btn = document.getElementById('startBtn');
+            const stopBtn = document.getElementById('stopBtn');
+            btn.disabled = true;
+            stopBtn.disabled = false;
+
+            const output = document.getElementById('output');
+            output.textContent = '[*] Initializing scan for ' + target + '...\n';
+            document.getElementById('status').textContent = 'Running';
+
+            try {
+                const response = await fetch('/start_scan', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ target, type, rotate })
+                });
+                const data = await response.json();
+
+                if (data.scan_id) {
+                    currentScanId = data.scan_id;
+                    document.getElementById('scanIdDisplay').textContent = 'ID: ' + currentScanId.split('-')[0];
+                    startPolling();
+                } else {
+                    alert('Error starting scan: ' + data.error);
+                    resetUI();
+                }
+            } catch (e) {
+                alert('Failed to connect to server.');
+                resetUI();
+            }
+        }
+
+        function startPolling() {
+            if (pollInterval) clearInterval(pollInterval);
+            pollInterval = setInterval(async () => {
+                if (!currentScanId) return;
+
+                try {
+                    const response = await fetch('/scan_status/' + currentScanId);
+                    const data = await response.json();
+
+                    const output = document.getElementById('output');
+                    output.textContent = data.output.join('');
+                    output.scrollTop = output.scrollHeight;
+
+                    if (data.status === 'completed' || data.status === 'stopped') {
+                        document.getElementById('status').textContent = data.status.charAt(0).toUpperCase() + data.status.slice(1);
+                        clearInterval(pollInterval);
+                        resetUI();
+                    }
+                } catch (e) {
+                    console.error('Polling error:', e);
+                }
+            }, 1000);
+        }
+
+        async function stopScan() {
+            if (!currentScanId) return;
+
+            await fetch('/stop_scan/' + currentScanId, { method: 'POST' });
+            document.getElementById('status').textContent = 'Stopping...';
+        }
+
+        function clearOutput() {
+            document.getElementById('output').textContent = '';
+        }
+
+        function resetUI() {
+            document.getElementById('startBtn').disabled = false;
+            document.getElementById('stopBtn').disabled = true;
+        }
+    </script>
+
+</body>
+
+</html>

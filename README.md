@@ -1,78 +1,46 @@
-# VulnzxScanX - Advanced Vulnerability Scanner
+# VulnzxScanX
 
-## Overview
-VulnScanX is a powerful vulnerability scanner designed for security testing. It provides a **GUI-based** interface with both **light and dark modes**, allowing security professionals to scan websites for vulnerabilities. The tool integrates multiple industry-standard security tools like **Nmap, Nikto, and WPScan** to perform comprehensive scans.
+A multi-interface vulnerability scanner aggregator using Nmap and other tools. Supports CLI, Web, and GUI.
 
 ## Features
-- ✅ **User-Friendly GUI** with Cyberpunk-style **dark and light mode** support.
-- ✅ **Target Selection** - Scan websites for security vulnerabilities.
-- ✅ **Multiple Scan Modes** - Choose from **Quick, Full, or Intense** scans.
-- ✅ **Parallel Scanning** - Runs multiple security tests simultaneously.
-- ✅ **Real-Time Output** - View scan progress dynamically.
-- ✅ **Detailed Scan Reports** - Save output results for further analysis.
-- ✅ **Cross-Platform Support** - Compatible with **Linux, Windows, and macOS**.
-
-## Supported Scans
-| Scanner | Description |
-|---------|-------------|
-| **Nmap** | Scans for open ports, running services, and vulnerabilities. |
-| **Nikto** | Identifies security flaws in web applications. |
-| **WPScan** | Checks WordPress sites for security issues. |
-
----
+- **Cross-platform**: Works on Windows and Linux.
+- **Three Interfaces**: CLI (`cli.py`), Web (`web_app.py`), and GUI (`vulnzxscanx.py`).
+- **IP Rotation**: Optional IP rotation using Tor (experimental).
+- **Modern UI**: Web dashboard includes a glassmorphism design.
+- **Reliable Engine**: Unified core engine for consistent results across all interfaces.
 
 ## Installation
-### Prerequisites
-Ensure the following dependencies are installed on your system:
-- **Python 3.x** (Recommended: 3.9+)
-- Required security tools:
-  - `nmap`
-  - `nikto`
-  - `wpscan`
-
-### Step-by-Step Installation
-#### 1. Clone the repository
-```bash
- git clone https://github.com/Naresh-R07/VulnzxScanX.git
- cd VulnzxScanX
-```
-
-#### 2. Run the setup script:
-```bash
-chmod +x setup.sh
-./setup.sh
-```
-This will:
-- Update your system
-- Install **Python3, pip, and required security tools**
-- Install necessary **Python dependencies**
-
-#### 3. Run the Application
-```bash
-python3 vulnzxscanx.py
-```
-
----
+1. Install dependencies:
+   ```bash
+   pip install -r requirements.txt
+   ```
+2. Ensure `nmap` is installed and in your system PATH.
+3. (Optional) For IP rotation, ensure `tor` is installed and running.
 
 ## Usage
-1. **Enter Target URL/IP**: Provide the target website or IP address.
-2. **Choose Scan Type**:
-   - **Quick Scan** (Basic Nmap scan)
-   - **Full Scan** (Comprehensive analysis using multiple tools)
-   - **Intense Scan** (Includes SQLMap and XSStrike for deeper analysis)
-3. **Start Scan**: Click 'Start Scan' and monitor results in real-time.
-4. **Save Results**: All scans are auto-saved in the specified output file.
 
----
+### 1. Graphical User Interface (Tkinter)
+```bash
+python vulnzxscanx.py
+```
 
-## Contributing
-We welcome contributions! Feel free to fork this repository and submit pull requests with improvements or additional features.
+### 2. Web Dashboard (Flask)
+```bash
+python web_app.py
+```
+Then open `http://127.0.0.1:5000` in your browser.
 
----
+### 3. Command Line Interface
+```bash
+python cli.py --target 127.0.0.1 --type Quick --rotate
+```
 
-## Support & Donations
-If you find VulnScanX useful, consider supporting its development:
-- **Follow the repository** for updates.
-- **Share with security professionals & developers.**
+## Scan Types
+- **Quick**: Fast scan of common ports.
+- **Full**: Thorough scan of all ports.
+- **Intense**: Comprehensive scan with OS detection and scripts.
+- **CVE Scan**: Scan for known vulnerabilities using Nmap scripts.
 
-Happy Hacking! 🚀
+## Troubleshooting
+- **Permission Denied**: Some Nmap scans require root/administrator privileges. Run your terminal/command prompt as administrator.
+- **IP Rotation Failed**: Ensure the Tor service is running. On Linux, the scanner tries `sudo service tor restart`.
